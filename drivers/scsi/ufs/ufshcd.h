@@ -618,6 +618,7 @@ struct ufs_stats {
 #endif
 	u32 hibern8_exit_cnt;
 	ktime_t last_hibern8_exit_tstamp;
+	u32 power_mode_change_cnt;
 	struct ufs_uic_err_reg_hist pa_err;
 	struct ufs_uic_err_reg_hist dl_err;
 	struct ufs_uic_err_reg_hist nl_err;
