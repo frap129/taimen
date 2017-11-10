@@ -10,4 +10,4 @@ export CROSS_COMPILE=~/android/kernel/aarch64-linaro-linux-gnu/bin/aarch64-linux
 
 make mrproper -j8
 make electron_defconfig
-make PATH=${CLANG_PATH}:${PATH} CC=clang -j8
+make PATH=${CLANG_PATH}:${PATH} CC="ccache clang" -j8
