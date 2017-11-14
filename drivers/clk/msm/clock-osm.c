@@ -819,6 +819,35 @@ static struct clk_lookup cpu_clocks_osm[] = {
 	CLK_LIST(cpu_debug_mux),
 };
 
+ssize_t cpu_clock_get_vdd(char *buf)
+{
+	ssize_t count = 0;
+	int i, mv;
+
+	if (!buf)
+		return 0;
+
+	for (i = 0; i < pwrcl_clk.num_entries; i++) {
+		mv = pwrcl_clk.osm_table[i].open_loop_volt;
+		if (mv < 0)
+			return 0;
+		count += sprintf(buf + count, "LP: %lumhz: %d mV\n",
+					pwrcl_clk.osm_table[i].frequency / 1000000,
+					mv);
+	}
+
+	for (i = 0; i < perfcl_clk.num_entries; i++) {
+		mv = perfcl_clk.osm_table[i].open_loop_volt;
+		if (mv < 0)
+			return 0;
+		count += sprintf(buf + count, "HP: %lumhz: %d mV\n",
+					perfcl_clk.osm_table[i].frequency / 1000000,
+					mv);
+	}
+
+	return count;
+}
+
 static unsigned long cpu_dbg_mux_get_rate(struct clk *clk)
 {
 	/* Account for the divider between the clock and the debug mux */
