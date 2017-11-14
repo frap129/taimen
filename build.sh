@@ -8,7 +8,7 @@ export CLANG_TRIPLE=aarch64-linux-gnu-
 export CLANG_PATH=~/android/kernel/dtc4/bin
 export CROSS_COMPILE=~/android/kernel/aarch64-linaro-linux-gnu/bin/aarch64-linux-gnu-
 export REL="v1"
-export TESTVER="-$1"
+export TESTVER="$1"
 
 make mrproper -j8
 make electron_defconfig
