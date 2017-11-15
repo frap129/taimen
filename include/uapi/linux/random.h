@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
 /*
  * include/linux/random.h
  *
@@ -22,7 +23,7 @@
 /* Get the contents of the entropy pool.  (Superuser only.) */
 #define RNDGETPOOL	_IOR( 'R', 0x02, int [2] )
 
-/* 
+/*
  * Write bytes into the entropy pool and add to the entropy count.
  * (Superuser only.)
  */
