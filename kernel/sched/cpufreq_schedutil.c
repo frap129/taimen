@@ -840,7 +840,7 @@ static int cpufreq_schedutil_cb(struct cpufreq_policy *policy,
 static
 #endif
 struct cpufreq_governor cpufreq_gov_schedutil = {
-	.name = "schedutil",
+	.name = "schedutil-stock",
 	.governor = cpufreq_schedutil_cb,
 	.owner = THIS_MODULE,
 };
