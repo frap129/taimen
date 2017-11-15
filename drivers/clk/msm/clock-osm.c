@@ -819,35 +819,6 @@ static struct clk_lookup cpu_clocks_osm[] = {
 	CLK_LIST(cpu_debug_mux),
 };
 
-ssize_t cpu_clock_get_vdd(char *buf)
-{
-	ssize_t count = 0;
-	int i, mv;
-
-	if (!buf)
-		return 0;
-
-	for (i = 0; i < pwrcl_clk.num_entries; i++) {
-		mv = pwrcl_clk.osm_table[i].open_loop_volt;
-		if (mv < 0)
-			return 0;
-		count += sprintf(buf + count, "LP: %lumhz: %d mV\n",
-					pwrcl_clk.osm_table[i].frequency / 1000000,
-					mv);
-	}
-
-	for (i = 0; i < perfcl_clk.num_entries; i++) {
-		mv = perfcl_clk.osm_table[i].open_loop_volt;
-		if (mv < 0)
-			return 0;
-		count += sprintf(buf + count, "HP: %lumhz: %d mV\n",
-					perfcl_clk.osm_table[i].frequency / 1000000,
-					mv);
-	}
-
-	return count;
-}
-
 static unsigned long cpu_dbg_mux_get_rate(struct clk *clk)
 {
 	/* Account for the divider between the clock and the debug mux */
@@ -3173,6 +3144,41 @@ static int clk_osm_acd_init(struct clk_osm *c)
 	clk_osm_acd_master_write_reg(c, auto_xfer_mask, ACD_AUTOXFER_CFG);
 
 	return 0;
+}
+
+ssize_t cpu_clock_get_vdd(char *buf)
+{
+	int i;
+	ssize_t count = 0;
+	u32 uv;
+	unsigned long rate = 0;
+
+	if (!buf)
+		return 0;
+
+	for (i = 0; i < pwrcl_clk.c.num_fmax; i++) {
+		rate = pwrcl_clk.c.fmax[i];
+		uv = find_voltage(&pwrcl_clk, rate);
+		if (uv <= 0) {
+			return -EINVAL;
+		}
+		count += sprintf(buf + count, "LP: %lumhz: %lu mV\n",
+					rate / 1000000,
+					(unsigned long)uv / 1000);
+	}
+
+	for (i = 0; i < perfcl_clk.c.num_fmax; i++) {
+		rate = perfcl_clk.c.fmax[i];
+		uv = find_voltage(&perfcl_clk, rate);
+		if (uv <= 0) {
+			return -EINVAL;
+		}
+		count += sprintf(buf + count, "HP: %lumhz: %lu mV\n",
+					rate / 1000000,
+					(unsigned long)uv / 1000);
+	}
+
+	return count;
 }
 
 static unsigned long init_rate = 300000000;
