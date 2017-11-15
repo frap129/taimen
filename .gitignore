@@ -114,4 +114,11 @@ all.config
 *.kdev4
 
 # Electron kernel
+*.img
+out/
+zImage
+Image.*
+*.save
+*.orig
+*.old
 kernel/bounds.s-*
