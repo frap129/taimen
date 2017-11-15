@@ -8,11 +8,14 @@ export CLANG_TRIPLE=aarch64-linux-gnu-
 export CLANG_PATH=~/android/kernel/dtc4/bin
 export CROSS_COMPILE=~/android/kernel/aarch64-linaro-linux-gnu/bin/aarch64-linux-gnu-
 export REL="v1"
-export TESTVER="-$1"
+if [ -n "$1" ]; then
+    export TESTVER="-$1"
+fi;
+export LOCALVERSION="Electron-$REL$TESTVER"
 
-make mrproper -j8
-make electron_defconfig
-make CC="ccache $CLANG_PATH/clang" -j8
+make mrproper -j8;
+make electron_defconfig;
+make CC="ccache $CLANG_PATH/clang" -j8;
 
 rm ../img/device/google/wahoo-kernel/Image.lz4-dtb ../img/device/google/wahoo-kernel/*.ko;
 cp arch/arm64/boot/Image.lz4-dtb ../img/device/google/wahoo-kernel/Image.lz4-dtb;
@@ -22,3 +25,4 @@ cd ../img;
 lunch aosp_taimen-user;
 make installclean;
 make bootimage -j8;
+cp ../img/out/target/product/taimen/boot.img $LOCALVERSION.img;
