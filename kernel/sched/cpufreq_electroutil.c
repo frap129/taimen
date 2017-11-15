@@ -977,7 +977,7 @@ static int cpufreq_electroutil_cb(struct cpufreq_policy *policy,
 static
 #endif
 struct cpufreq_governor cpufreq_gov_electroutil = {
-	.name = "electroutil",
+	.name = "schedutil",
 	.governor = cpufreq_electroutil_cb,
 	.owner = THIS_MODULE,
 };
