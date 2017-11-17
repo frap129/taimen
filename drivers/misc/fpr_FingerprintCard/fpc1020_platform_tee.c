@@ -54,6 +54,8 @@
 
 #define KEY_FINGERPRINT 0x2ee
 
+static struct notifier_block notif;
+
 static const char * const pctl_names[] = {
 	"fpc1020_reset_reset",
 	"fpc1020_reset_active",
@@ -442,6 +444,20 @@ static const struct attribute_group attribute_group = {
 	.attrs = attributes,
 };
 
+static void set_fingerprint_nice(int nice)
+{
+	struct task_struct *p;
+
+	read_lock(&tasklist_lock);
+	for_each_process(p) {
+		if (!memcmp(p->comm, "fingerprint", 12)) {
+			set_user_nice(p, nice);
+			break;
+		}
+	}
+	read_unlock(&tasklist_lock);
+}
+
 static int fpc1020_input_init(struct fpc1020_data * fpc1020)
 {
 	int ret;
@@ -488,8 +504,7 @@ static irqreturn_t fpc1020_irq_handler(int irq, void *handle)
 	if (state_suspended) {
 		input_report_key(fpc1020->input_dev, KEY_FINGERPRINT, 1);
 		input_sync(fpc1020->input_dev);
-		input_report_key(fpc1020->input_dev, KEY_FINGERPRINT, 0);
-		input_sync(fpc1020->input_dev);
+		input_report_key(fpc1020->input_dev, KEY_FINGERPRINT, 0);		input_sync(fpc1020->input_dev);
 	}
 
 	return IRQ_HANDLED;
@@ -645,6 +660,23 @@ exit:
 	return rc;
 }
 
+static int state_notifier_callback(struct notifier_block *this,
+				unsigned long event, void *data)
+{
+	switch (event) {
+		case STATE_NOTIFIER_ACTIVE:
+			set_fingerprint_nice(2);
+			break;
+		case STATE_NOTIFIER_SUSPEND:
+			set_fingerprint_nice(-1);
+			break;
+		default:
+			break;
+	}
+
+	return NOTIFY_OK;
+}
+
 static int fpc1020_remove(struct platform_device *pdev)
 {
 	struct fpc1020_data *fpc1020 = platform_get_drvdata(pdev);
@@ -687,6 +719,10 @@ static int __init fpc1020_init(void)
 		pr_info("%s OK\n", __func__);
 	else
 		pr_err("%s %d\n", __func__, rc);
+
+	notif.notifier_call = state_notifier_callback;
+	if (state_register_client(&notif))
+		pr_err("Cannot register State notifier callback for fpc1020.\n");
 
 	return rc;
 }
