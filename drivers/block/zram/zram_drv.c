@@ -1288,7 +1288,7 @@ static int zram_add(void)
 	}
 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
 	zram->meta = NULL;
-	zram->max_comp_streams = CONFIG_NR_CPUS;
+	zram->max_comp_streams = CONFIG_NR_CPUS / 2;
 
 	pr_info("Added device: %s\n", zram->disk->disk_name);
 	return device_id;
