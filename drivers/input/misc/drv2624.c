@@ -262,6 +262,7 @@ static void drv2624_haptics_work(struct work_struct *work)
 	drv2624_stop(drv2624);
 
 	wake_lock(&drv2624->wklock);
+	drv2624->led_dev.brightness = drv2624->vibrator_strength;
 	drv2624->vibrator_playing = true;
 	drv2624_enable_irq(drv2624, true);
 
@@ -1483,6 +1484,38 @@ static ssize_t lp_trigger_effect_store(struct device *dev,
 	return count;
 }
 
+static ssize_t vibrator_strength_show(struct device *dev,
+				   struct device_attribute *attr, char *buf)
+{
+	struct drv2624_data *drv2624 = dev_get_drvdata(dev);
+
+	return snprintf(buf, PAGE_SIZE, "%d\n", drv2624->vibrator_strength);
+}
+
+static ssize_t vibrator_strength_store(struct device *dev,
+				    struct device_attribute *attr,
+				    const char *buf, size_t count)
+{
+	struct drv2624_data *drv2624 = dev_get_drvdata(dev);
+	int strength, ret;
+
+	ret = kstrtou32(buf, 10, &strength);
+	if (ret) {
+		dev_err(dev,
+			"Invalid input for vibrator_strength: ret = %d\n", ret);
+		return ret;
+	}
+
+	if (strength > 100)
+		strength = 100;
+	else if (strength < 0)
+		strength = 0;
+
+	drv2624->vibrator_strength = strength;
+
+	return count;
+}
+
 static DEVICE_ATTR(rtp_input, 0660, rtp_input_show, rtp_input_store);
 static DEVICE_ATTR(mode, 0660, mode_show, mode_store);
 static DEVICE_ATTR(loop, 0660, loop_show, loop_store);
@@ -1501,6 +1534,8 @@ static DEVICE_ATTR(lra_wave_shape, 0660, lra_wave_shape_show,
 		   lra_wave_shape_store);
 static DEVICE_ATTR(lp_trigger_effect, 0660, lp_trigger_effect_show,
 		   lp_trigger_effect_store);
+static DEVICE_ATTR(vibrator_strength, 0664, vibrator_strength_show,
+		   vibrator_strength_store);
 
 static struct attribute *drv2624_fs_attrs[] = {
 	&dev_attr_rtp_input.attr,
@@ -1518,6 +1553,7 @@ static struct attribute *drv2624_fs_attrs[] = {
 	&dev_attr_ol_lra_period.attr,
 	&dev_attr_lra_wave_shape.attr,
 	&dev_attr_lp_trigger_effect.attr,
+	&dev_attr_vibrator_strength.attr,
 	NULL,
 };
 
@@ -1652,6 +1688,9 @@ static int drv2624_i2c_probe(struct i2c_client *client,
 	request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG, "drv2624.bin",
 				&client->dev, GFP_KERNEL, drv2624,
 				drv2624_firmware_load);
+
+	/* Default vibrator strength to max */
+	drv2624->vibrator_strength = 100;
 
 	dev_info(drv2624->dev, "drv2624 probe succeeded\n");
 
