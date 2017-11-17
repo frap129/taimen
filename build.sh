@@ -25,4 +25,7 @@ cd ../img;
 lunch aosp_taimen-user;
 make installclean;
 make bootimage -j8;
-cp ~/android/kernel/img/out/target/product/taimen/boot.img ~/android/kernel/taimen/$LOCALVERSION.img;
+cd ../taimen;
+rm -rf out;
+mkdir out;
+cp ~/android/kernel/img/out/target/product/taimen/boot.img ~/android/kernel/taimen/out/$LOCALVERSION.img;
