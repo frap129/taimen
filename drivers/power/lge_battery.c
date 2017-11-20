@@ -34,6 +34,8 @@
 #define LIM_VOLT			4100000
 #define PARALLEL_VOLT			4450000
 #define CHG_CURRENT_MAX			3550000
+#define CHG_CURRENT_MID			3000000
+#define CHG_CURRENT_MIN			2750000
 #define LCD_ON_CURRENT			1000000
 #define WATCH_DELAY			30000
 #define DEMO_MODE_MAX			35
@@ -120,8 +122,8 @@ static struct bm_therm_table therm_table[BM_HEALTH_MAX] = {
 
 static int bm_vote_fcc_table[BM_REASON_MAX] = {
 	CHG_CURRENT_MAX,
-	-EINVAL,
-	-EINVAL,
+	CHG_CURRENT_MID,
+	CHG_CURRENT_MIN,
 	-EINVAL,
 	-EINVAL,
 };
