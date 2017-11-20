@@ -15,7 +15,8 @@ export LOCALVERSION="Electron-$REL$TESTVER"
 
 make mrproper -j8;
 make electron_defconfig;
-make CC="ccache $CLANG_PATH/clang" -j8;
+make CC="ccache $CLANG_PATH/clang" Image.lz4-dtb -j8;
+#make CC="ccache $CLANG_PATH/clang" modules -j8;
 
 rm ../img/device/google/wahoo-kernel/Image.lz4-dtb ../img/device/google/wahoo-kernel/*.ko;
 cp arch/arm64/boot/Image.lz4-dtb ../img/device/google/wahoo-kernel/Image.lz4-dtb;
