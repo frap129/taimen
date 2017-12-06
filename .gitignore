@@ -122,3 +122,4 @@ Image.*
 *.orig
 *.old
 kernel/bounds.s-*
+net/wireguard/
