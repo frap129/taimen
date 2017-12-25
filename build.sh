@@ -5,7 +5,7 @@
 export ARCH=arm64
 export SUBARCH=arm64
 export CLANG_TRIPLE=aarch64-linux-gnu-
-export CLANG_PATH=~/android/kernel/dtc4/bin
+export CLANG_PATH=~/android/kernel/dtc5/bin
 export CROSS_COMPILE=~/android/kernel/aarch64-linaro-linux-gnu/bin/aarch64-linux-gnu-
 export REL="v4"
 if [ -n "$1" ]; then
