@@ -11,7 +11,8 @@ export REL="v4"
 if [ -n "$1" ]; then
     export TESTVER="-$1"
 fi;
-export LOCALVERSION="Electron-$REL$TESTVER"
+export LOCALVERSION="-Electron-$REL$TESTVER"
+export COMPILER_NAME="DragonTC 5.0"
 
 make mrproper -j8;
 make electron_defconfig;
