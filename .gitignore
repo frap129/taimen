@@ -123,3 +123,4 @@ Image.*
 *.old
 kernel/bounds.s-*
 net/wireguard/
+defconfig
